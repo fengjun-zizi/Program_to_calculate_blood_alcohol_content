@@ -3,3 +3,6 @@
 所以呢，这个程序仅仅是**根据Widnmark公式来计算人体中的血液含量**
 
 ## Why did I to write the program 
+It is simply inspired by real life . <br>
+My friend drank excessively after a breakup , and during the process, he seemed unaware of how alcohol was affecting him <br>
+So this program is merely **base on the Widmark formula** to calculate the blood alcohol content in the human body 
