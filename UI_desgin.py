@@ -1,3 +1,4 @@
+import tkinter
 from pyexpat.errors import messages
 from tkinter import *
 from tkinter import messagebox
@@ -6,7 +7,9 @@ class Desgin(Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.pack()
+        self.entries = {}
+        self.result_var = StringVar(value = "BAC == -- g/l")
+        self.pack(padx = 20 , pady = 20)
         self.create_widgets()
         self.mybd = None
         self.cursor = None
@@ -15,62 +18,47 @@ class Desgin(Frame):
 
 
     def create_widgets(self):
-
-        self.entries = {}  # 用来存所有 Entry 控件 这是一个字典
-
         # weight
-        self.label = Label(self, text="Please enter your weight (kg):")
-        self.label.pack()
-        self.entries["weight"] = Entry(self) #这里创建了一个输入框，并且把它保存到了一个字典里self.entries，键是“weight”
-        self.entries["weight"].pack() #他调用了.pack() 把刚才创建的这个输入框显示到窗口中
+        Label(self, text="Weight (kg)").pack()
+        self.entries["weight"] = Entry(self)
+        self.entries["weight"].pack()
 
         # wine name
-        self.label01 = Label(self, text="Please enter the name of the wine:")
-        self.label01.pack()
+        Label(self, text="Wine name").pack()
         self.entries["wine_name"] = Entry(self)
         self.entries["wine_name"].pack()
 
         # volume
-        self.label02 = Label(self, text="Please enter the volume of the wine (ml):")
-        self.label02.pack()
+        Label(self, text="Volume (ml)").pack()
         self.entries["volume"] = Entry(self)
         self.entries["volume"].pack()
 
         # alcohol %
-        self.label03 = Label(self, text="Please enter the alcohol fraction (%):")
-        self.label03.pack()
+        Label(self, text="Alcohol fraction (%)").pack()
         self.entries["abv"] = Entry(self)
         self.entries["abv"].pack()
 
         # gender
-        self.label04 = Label(self, text="Please enter your gender (male or female):")
-        self.label04.pack()
+        Label(self, text="Gender").pack()
+        gender_var = StringVar(value="male")
+        self.entries["gender"] = gender_var
+        OptionMenu(self, gender_var, "male", "female").pack()
 
-        # gender options
-        self.gender_var = StringVar(value = "male") # 创建了一个标签，而StringVar这个函数是对一个变量的追踪
-        self.entries["gender"] = self.gender_var #用来保存并自动追踪一个字符串值
-        self.gender_options = ["male", "female"] #这是一个普通一个python列表，稍微会展开成参数
-        self.gender_menu = OptionMenu(self, self.gender_var, *self.gender_options)
-        self.gender_menu.pack() # OptionMenU这个函数是用来创建下拉框的，父容器是self，
+        # 结果标签
+        Label(self, textvariable=self.result_var,
+              fg="white", font=("Arial", 12, "bold")).pack(pady=8)
 
-        self.button = Button(self, text="Just show the data", command=self.on_click)
-        self.button.pack()
+        # 这两个按钮只放句柄，不把 pack() 赋回去
+        self.debug_btn = Button(self, text="Show raw data")
+        self.debug_btn.pack(side="left", padx=5)
 
-        #entries这个字典储存了可以计算ABC的大部分信息
-
+        self.calc_btn = Button(self, text="Calculate")
+        self.calc_btn.pack(side="left", padx=5)
 
     def on_click(self):
         data = {}
         for key, entry in self.entries.items() :
             data[key] = entry.get()
         print("表格数据为： ", data)
-
-
-if __name__ == '__main__':
-    root = Tk()
-    root.geometry("600x600+700+300")
-    root.title("Calculate blood alcohol")
-    app = Desgin(master=root)
-    root.mainloop()
 
     #表格数据为：  {'weight': 'fdf', 'wine_name': 'fdfd', 'volume': 'fdfd', 'abv': 'dfd', 'gender': 'male'}

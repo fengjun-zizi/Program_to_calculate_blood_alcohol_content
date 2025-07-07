@@ -1,35 +1,37 @@
+
+import tkinter as tk       # ★ 必须有
 import mysql.connector
-from typing import Any
-from tkinter import Tk
 from UI_desgin import Desgin
+from tkinter import messagebox
+# 其余代码保持不变 …
 
 class Main (Desgin):
-    def __init__(self):
-        super().__init__()
-        self.entries:dict[str, Any] = {} #这行代码同时做了两件事情，类型标注+实际赋值
-        self.create_widgets()
-        self.mydb = None
-        self.cursor = None
-        self.r_boy = 0.68
-        self.r_girl = 0.55
-        self.r = 0
-        self.p = 0.789
-        self.wine_name = ""
-        self.volume = 0
-        self.abv = 0
-        self.weight = 0
-        self.A = 0
-        self.BAC_0 = 0
-        self.gender = ""
-        self.abv_1 = 0
-        self.content_alcohol = 0
+    def __init__(self , master=None):
+        super().__init__(master)  #也就是在这里我已经把Desgin中的字典传递过来了
+
+        # 绑定按钮
+        self.debug_btn.config(command=self.print_raw_data)
+        self.calc_btn.config(command=self.function_about_widmark)
+
+        # 常量
+        self.p       = 0.789         # 乙醇密度
+        self.r_boy   = 0.68
+        self.r_girl  = 0.55
+        self.BAC_0   = 0             # 计算结果缓存
+
+        # 数据库连接（可放到 try/except 里）
         self.mydb = mysql.connector.connect(
             host="localhost",
             user="root",
-            passwd="",  # 如果你有密码，请填入
+            passwd="",
             database="blood_alcohol"
         )
         self.cursor = self.mydb.cursor()
+
+    def print_raw_data(self):
+        data = {k: (v.get() if hasattr(v, "get") else v.get())
+                for k, v in self.entries.items()}
+        print("Debug data:", data)
 
 #可以直接使用print函数来打印，但是使用for函数，比较美观
 
@@ -59,14 +61,25 @@ class Main (Desgin):
             self.r = self.r_girl
 
     def function_about_widmark(self):
-        self.abv = self.entries["abv"]
-        self.abv_1 = float(self.abv) /100
-        self.volume = float(self.volume)
-        self.content_alcohol = self.volume * self.abv_1
-        self.A = self.p * self.content_alcohol
-        self.weight = float(self.weight)
-        self.BAC_0 = self.A / self.weight * self.r
-        print(f"Your blood alcohol content is (excluding metabolic and theoretical value){self.BAC_0}")
+        try:
+            weight   = float(self.entries["weight"].get())
+            volume   = float(self.entries["volume"].get())
+            abv_pct  = float(self.entries["abv"].get())
+            gender   = self.entries["gender"].get().lower()
+
+            r = self.r_boy if gender == "male" else self.r_girl
+            grams_ethanol = volume * (abv_pct / 100) * self.p
+            self.BAC_0 = grams_ethanol / (weight * r)
+
+            # 更新 UI
+            self.result_var.set(f"BAC = {self.BAC_0:.2f} g/L")
+
+            # 查数据库并弹窗
+            self.show_data()
+
+        except ValueError:
+            messagebox.showerror("Input error",
+                                 "所有数值字段必须填入可转换为数字的内容。")
 
     def show_data(self):
         self.cursor.execute("SELECT * FROM bac_levels")
@@ -100,9 +113,13 @@ class Main (Desgin):
         else:
             print("No matching BAC level found.")
 
+    def destroy(self):
         self.close_database()
+        super().destroy()
 # 运行
-app = Main()
-app.get_wine_name()
-app.function_about_widmark()
-app.show_data()
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Widmark BAC Calculator")
+    root.geometry("400x480")
+    app = Main(master=root)
+    root.mainloop()
