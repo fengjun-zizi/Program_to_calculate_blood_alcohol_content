@@ -1,7 +1,13 @@
 import mysql.connector
+from typing import Any
+from tkinter import Tk
+from UI_desgin import Desgin
 
-class Main:
+class Main (Desgin):
     def __init__(self):
+        super().__init__()
+        self.entries:dict[str, Any] = {} #这行代码同时做了两件事情，类型标注+实际赋值
+        self.create_widgets()
         self.mydb = None
         self.cursor = None
         self.r_boy = 0.68
@@ -53,6 +59,7 @@ class Main:
             self.r = self.r_girl
 
     def function_about_widmark(self):
+        self.abv = self.entries["abv"]
         self.abv_1 = float(self.abv) /100
         self.volume = float(self.volume)
         self.content_alcohol = self.volume * self.abv_1
