@@ -6,3 +6,7 @@
 It is simply inspired by real life . <br>
 My friend drank excessively after a breakup , and during the process, he seemed unaware of how alcohol was affecting him <br>
 So this program is merely **base on the Widmark formula** to calculate the blood alcohol content in the human body 
+
+## For Example
+![222.png](222.png) <br>
+![111.png](111.png)
