@@ -10,3 +10,6 @@ So this program is merely **base on the Widmark formula** to calculate the blood
 ## For Example
 ![222.png](222.png) <br>
 ![111.png](111.png)
+
+## Notice
+The version of python is **python 3**
