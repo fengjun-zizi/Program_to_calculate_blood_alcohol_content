@@ -1,28 +1,24 @@
+from pyexpat.errors import messages
 
-import tkinter as tk
 import mysql.connector
-#from UI_desgin import Desgin
 from UI_more_modern import ModernDesgin
-from tkinter import messagebox
-from tkinter import ttk
-import customtkinter as ctk
+import tkinter as messagebox
 import re
-class Main (ModernDesgin): # 对于UI_desgin来说应该是Desgin
+
+class Calculator (ModernDesgin):
     def __init__(self , master=None):
-        super().__init__()  #也就是在这里我已经把Desgin中的字典传递过来了
+        super().__init__()
 
-        # 绑定按钮
-        #self.debug_btn.config(command=self.print_raw_data)
-        #self.calc_btn.config(command=self.function_about_widmark) (这个有用对于UI_desgin.py这个文件来说)
-        #self.load_btn.config(command=self.load_data_from_db)
-
+        self.r = None
         # 常量
         self.p       = 0.789         # 乙醇密度
         self.r_boy   = 0.68
         self.r_girl  = 0.55
-        self.BAC_0   = 0             # 计算结果缓存
+        self.BAC_0   = 0
 
-        # 数据库连接（可放到 try/except 里）
+        # 计算结果缓存
+
+        # 连接数据库
         self.mydb = mysql.connector.connect(
             host="localhost",
             user="root",
@@ -30,13 +26,14 @@ class Main (ModernDesgin): # 对于UI_desgin来说应该是Desgin
             database="blood_alcohol"
         )
         self.cursor = self.mydb.cursor()
+        self.button.configure(command=self.calculate)
 
     def print_raw_data(self):
         data = {k: (v.get() if hasattr(v, "get") else v.get())
                 for k, v in self.entries.items()}
         print("Debug data:", data)
 
-#可以直接使用print函数来打印，但是使用for函数，比较美观
+
 
     def close_database(self):
         if self.cursor:
@@ -46,50 +43,39 @@ class Main (ModernDesgin): # 对于UI_desgin来说应该是Desgin
             self.mydb.close()
 
 
-
-    def get_wine_name(self):
-        self.wine_name = input("Please enter the name of the wine: ")
-        self.volume = input("Please enter the volume of the wine(unit is ml): ")
-        self.abv = input("Please enter the fraction of the wine(unit is %): ")
-        self.weight = input("Please enter your weight(unit is kg): ")
-        self.gender = input("Please enter the gender（male or female）: ")
-        print(f"Your the wine name is {self.wine_name}")
+    def get_data(self):
+        print(f"Your the wine name is {self.name}")
         print(f"Your volume is {self.volume}")
-        print(f"Your abv is {self.abv}")
+        print(f"Your fraction is {self.fraction}")
         print(f"Your weight is {self.weight}")
-        print(f"Your gender is {self.gender}")
-        if self.gender == "male" :
-            self.r = self.r_boy
-        else:
+        print(f"Your gender is {self.gender_var}")
+
+        if self.gender_var == "male":
             self.r = self.r_girl
+        else :
+            self.r = self.r_boy
 
-    def function_about_widmark(self):
-        try:
-            weight   = float(self.entries["weight"].get())
-            volume   = float(self.entries["volume"].get())
-            abv_pct  = float(self.entries["fraction"].get()) # 对于UI_desgin这个文件来说，应该是abv
-            gender   = self.entries["gender"].get().lower()
-
+    def calculate(self):
+        try :
+            print("run successfully")
+            weight = float(self.entries["weight"].get())
+            volume = float(self.entries["volume"].get())
+            abv_pct = float(self.entries["fraction"].get())
+            gender = self.entries["gender"].get().lower()
             r = self.r_boy if gender == "male" else self.r_girl
             grams_ethanol = volume * (abv_pct / 100) * self.p
             self.BAC_0 = grams_ethanol / (weight * r)
 
-            # 更新 UI
-            self.result_var.set(f"BAC = {self.BAC_0:.2f} g/L")
-
-            self.load_data_from_db(only_match = True)
-
-            # 查数据库并弹窗
             self.show_data()
 
         except ValueError:
-            messagebox.showerror("Input error",
-                                 "所有数值字段必须填入可转换为数字的内容。")
+            messagebox.showerror("Input Error" , "All numeric fields must be filled with content that can be converted to a number")
+
 
     def show_data(self):
-        self.cursor.execute("SELECT * FROM bac_levels")
+        self.cursor.execute("SELECT * FROM blood_alcohol")
         rows = self.cursor.fetchall()
-        matched_row = None
+        mathed_row = None
 
         for row in rows:
             id, bac_range, g_per_l_range, symptoms, legal_implications, recommendation = row
@@ -101,7 +87,7 @@ class Main (ModernDesgin): # 对于UI_desgin来说应该是Desgin
                 upper = float(upper.strip())
 
                 if lower <= self.BAC_0 <= upper:
-                    matched_row = row
+                    mathed_row = row
                     break
 
             elif "≥" in g_per_l_range:
@@ -162,12 +148,11 @@ class Main (ModernDesgin): # 对于UI_desgin来说应该是Desgin
     def destroy(self):
         self.close_database()
         super().destroy()
-# 运行
+
+
+
 if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("Blood Alcohol Content Calculator")
-    #root.attributes("-topmost", True)
-    root.geometry("1000x800")
-    app = Main(master=root)
-    #root.customtk
-    root.mainloop()
+
+    app = Calculator()
+    app.resizable(False, False)
+    app.mainloop()

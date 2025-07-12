@@ -4,9 +4,14 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 import re
+
+
+
+
 class Desgin(Frame):
     def __init__(self, master=None):
         super().__init__(master)
+        #app = ctk.CTk(master=master)
         self.master = master
         self.entries = {}
         self.result_var = StringVar(value = "BAC == -- g/l")
@@ -20,7 +25,9 @@ class Desgin(Frame):
         self.r_girl = 0.55
 
     def create_widgets(self):
-        # weight
+        #Background
+        #customtkinter.set_appearance_mode('system')
+       #self.label = customtkinter.CTkLabel(app, text="weight" , fg_color = "transparent")
         Label(self, text="Weight (kg)").pack()
         self.entries["weight"] = Entry(self)
         self.entries["weight"].pack()
