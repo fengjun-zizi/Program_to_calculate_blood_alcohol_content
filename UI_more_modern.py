@@ -1,6 +1,7 @@
 import customtkinter
 import customtkinter as ctk
 from tkinter import *
+from tkinter import ttk
 
 from UI_desgin import Desgin
 # 设置全局外观
@@ -71,15 +72,16 @@ class ModernDesgin(ctk.CTk):
         self.entries["volume"] = self.enty1
 
 
-        # Fraction Wine
+        # Fractiosn Wine
         self.label03 = ctk.CTkLabel(self, text="Fraction Wine", fg_color="black", text_color="white", corner_radius=10,
                                     width=200,height=45,font=font)
         self.label03.grid(row=2, column=0, padx=10, pady=10, sticky="e")
 
-        self.textbox2 = ctk.CTkTextbox(self, width=200, height=45, corner_radius=10)
-        self.textbox2.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+        #self.textbox2 = ctk.CTkTextbox(self, width=200, height=45, corner_radius=10)
+        #self.textbox2.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
         # 赋值给Fraction Wine
         self.entry2 = ctk.CTkEntry(self, textvariable=self.fraction)
+        self.entry2.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
         self.entries["fraction"] = self.fraction
 
         # Weight
@@ -131,11 +133,21 @@ class ModernDesgin(ctk.CTk):
         # Calculate Button
         self.button = ctk.CTkButton(self, text="Calculate", fg_color="black", text_color="white",
                                     width=400, height=45, font=font)
-        self.button_1 = ctk.CTkButton(self,text = "test" , fg_color="black" , text_color="white" , command = self.button_1(), width=400, height=45, font=font)
+        self.button_1 = ctk.CTkButton(self,text = "test" , fg_color="black" , text_color="white" , command = self.on_button_click,width=400, height=45, font=font)
         self.button.grid(row=10, column=0, columnspan=2, padx=10, pady=20, sticky="ew")
         self.button_1.grid(row=15, column=1, columnspan=2, padx=10, pady=20, sticky="ew")
 
+        # 创建空白表格
+        self.tree = ttk.Treeview(self, columns=("symptoms", "legal_implications", "recommendation"), show="headings", height=5)
+        self.tree.heading("symptoms", text="Symptoms")
+        self.tree.heading("legal_implications", text="Legal Implications")
+        self.tree.heading("recommendation", text="Recommendation")
+        self.tree.grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
+
+    def on_button_click(self):
+        self.button_1()
+        self.calculate()
 
     def button_1 (self):
         print("def button_1 run successfully ")

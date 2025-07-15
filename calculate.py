@@ -30,14 +30,26 @@ class Calculator (ModernDesgin):
         self.run()
 
     def run(self):
-        self.ui()
-        if self.name == "" and self.volume == ''and self.fraction == '' and self.weight == '':
-            messagebox.showerror("Input Error", "All fields must be filled with content that can be converted to a number")
-            return
-        else :
-            self.button.configure(command=self.calculate)
 
-        self.load_data_from_db()  # 加载数据到表格中
+        
+        
+            self.ui()
+
+
+            def validate_and_calculate():
+                name = self.vars["name"].get().strip()
+                volume = self.volume.get()
+                fraction = self.fraction.get()
+                weight = self.weight.get()
+
+                if name == "" or self.volume == 0.0 or fraction == 0.0 or weight == 0.0:
+                    messagebox.showerror("Input Error", "All fields must be filled with valid values.")
+                    return
+                else:
+                    self.calculate()
+
+            # 设置按钮的 command
+            self.button.configure(command=validate_and_calculate)
 
 
     def print_raw_data(self):
@@ -82,6 +94,10 @@ class Calculator (ModernDesgin):
 
 
             grams_ethanol = volume * (abv_pct / 100) * self.p
+            print(f"Your volume is {volume} ml")
+            print(f"Your alcohol fraction is {abv_pct} %")
+            print(f"Your p is {self.p} g/ml")
+            print("上面的的结果和grams_ethanol有关")
             #print(f"Your weight is {self.weight}")
             #print(f"Your weight is {weight}")
             weight = self.entries["weight"].get()
@@ -93,16 +109,24 @@ class Calculator (ModernDesgin):
             print(weight)
             print(self.r)
             self.BAC_0 = grams_ethanol / (weight * self.r)
+            print(f"Your BAC is {self.BAC_0:.2f} g/L")
+            print(f"gram_ethanol is {grams_ethanol:.2f} g")
+            print(f"weight is {weight:.2f} kg")
+            print(f"r is {self.r:.2f} L/kg")
+
 
             self.show_data()
 
         except ValueError:
             messagebox.showerror("Input Error" , "All numeric fields must be filled with content that can be converted to a number")
 
+        # self.load_data_from_db()
+
 
     def show_data(self):
+        """根据计算的 BAC 值，从数据库中查询对应的症状、法律后果和建议，并显示在界面上"""
         self.cursor.execute("SELECT * FROM bac_levels")  # 从数据库中选择所有的行
-        rows = self.cursor.fetchall()
+        rows = self.cursor.fetchall() # 获取所有行数据，以列表的形式保存在 rows 中
         matched_row = None
 
         for row in rows:
@@ -110,7 +134,8 @@ class Calculator (ModernDesgin):
             g_per_l_range = g_per_l_range.strip()
 
             if "–" in g_per_l_range:  # en dash
-                lower, upper = g_per_l_range.split("–")
+                lower, upper = g_per_l_range.split("–") # 给 lower 和 upper 赋值
+                # 去掉首尾空格，并转换为 float
                 lower = float(lower.strip())
                 upper = float(upper.strip())
 
@@ -131,6 +156,9 @@ class Calculator (ModernDesgin):
             print(f"Recommendation: {matched_row[5]}")
         else:
             print("No matching BAC level found.")
+
+
+        self.load_data_from_db()
         
 
 
@@ -151,10 +179,17 @@ class Calculator (ModernDesgin):
 
             if only_match and not self._row_match_bac(row) :
                 continue
-            self.tree.insert("" , "end" , values= (row[3] , row[4] , row[5]))
-            self.symptoms_var.set(row[3])
-            self.legal_var.set(row[4])
-            self.recommendation_var.set(row[5])
+
+            if march:
+            # 如果匹配成功，插入到表格中
+                self.tree.insert("" , "end" , values= (row[3] , row[4] , row[5]))
+                self.symptoms_var.set(row[3])
+                self.legal_var.set(row[4])
+                self.recommendation_var.set(row[5])
+                print(f"symptoms: {self.symptoms_var.get()}")
+                print(f"legal: {self.legal_var.get()}")
+                print(f"recommendation: {self.recommendation_var.get()}")
+
 
     def _row_match_bac(self, row):
 
@@ -184,5 +219,5 @@ class Calculator (ModernDesgin):
 if __name__ == "__main__":
 
     app = Calculator()
-    app.resizable(False, False)
+    #app.resizable(False, False)
     app.mainloop()
