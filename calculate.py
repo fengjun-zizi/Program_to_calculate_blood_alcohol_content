@@ -9,7 +9,7 @@ class Calculator (ModernDesgin):
     def __init__(self , master=None):
         super().__init__()
 
-        self.r = None
+        self.r = 0.00
         # 常量
         self.p       = 0.789         # 乙醇密度
         self.r_boy   = 0.68
@@ -58,13 +58,27 @@ class Calculator (ModernDesgin):
     def calculate(self):
         try :
             print("run successfully")
-            weight = float(self.entries["weight"].get())
+            #weight = float(self.entries["weight"].get())
             volume = float(self.entries["volume"].get())
             abv_pct = float(self.entries["fraction"].get())
-            gender = self.entries["gender"].get().lower()
-            r = self.r_boy if gender == "male" else self.r_girl
+            gender = self.entries["gender"].get().lower().strip()
+            self.r = self.r_boy
+            if gender == "male" :
+                self.r = self.r_boy
+            else :
+                self.r = self.r_girl
+
+
             grams_ethanol = volume * (abv_pct / 100) * self.p
-            self.BAC_0 = grams_ethanol / (weight * r)
+            print(f"Your weight is {self.weight}")
+            print(f"Your weight is {weight}")
+            weight = self.entries["weight"].get().strip()
+            if weight == " " :
+                messagebox.showerror("Input Error" , "All weights must be filled with content that can be converted to a number")
+                return
+
+            weight = float(weight)
+            self.BAC_0 = grams_ethanol / (weight * self.r)
 
             self.show_data()
 

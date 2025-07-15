@@ -34,17 +34,26 @@ class ModernDesgin(ctk.CTk):
 
         font = ctk.CTkFont(family="Times New Roman", size=15)
 
+
+
         # Wine Name
         self.label01 = ctk.CTkLabel(self, text="Wine Name", fg_color="black", text_color="white", corner_radius=10,
                                     width=200,height=45,font=font)
         self.label01.grid(row=0, column=0, padx=10, pady=10, sticky="e")
 
-        self.textbox = ctk.CTkTextbox(self, width=200, height=45, corner_radius=10)
-        self.textbox.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        # self.textbox = ctk.CTkTextbox(self, width=200, height=45, corner_radius=10)
+        # self.textbox.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
         # 变量赋值 Wine Name
-        self.entry = ctk.CTkEntry(self, textvariable=self.name)
+
         self.vars["name"] = ctk.StringVar()
+
+        self.entry = ctk.CTkEntry(self, textvariable=self.vars["name"], orner_radius=10, width=200,height=45,font=font)
+        self.entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
         #self.entries["weight"].grid(row=1, column=0, padx=10, pady=10, sticky="e")
+        # 设置键位置
+        self.entries["name"] = self.entry
+
+
 
         # Volume
         self.label02 = ctk.CTkLabel(self, text="Volume", fg_color="black", text_color="white", corner_radius=10,
@@ -55,6 +64,8 @@ class ModernDesgin(ctk.CTk):
         self.textbox1.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
         # 变量赋值 Volume
         self.enty1 = ctk.CTkEntry(self, textvariable=self.volume)
+        # 设置键位
+        self.entries["volume"] = self.volume
 
 
         # Fraction Wine
@@ -66,16 +77,24 @@ class ModernDesgin(ctk.CTk):
         self.textbox2.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
         # 赋值给Fraction Wine
         self.entry2 = ctk.CTkEntry(self, textvariable=self.fraction)
+        self.entries["fraction"] = self.fraction
 
         # Weight
         self.label04 = ctk.CTkLabel(self, text="Weight", fg_color="black", text_color="white", corner_radius=10,
                                     width=200, height=45,font=font)
         self.label04.grid(row=3, column=0, padx=10, pady=10, sticky="e")
 
-        self.textbox3 = ctk.CTkTextbox(self, width=200, height=45, corner_radius=10)
+        # weight的输入框设置
+        self.weight_var = ctk.StringVar()
+        self.textbox3 = ctk.CTkEntry(self, textvariable=self.weight_var, width=200, height=45, corner_radius=10)
         self.textbox3.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
+
         #赋值给weight
         self.entry3 = ctk.CTkEntry(self, textvariable=self.weight)
+
+        # 这个是把weight的数据传入到字典，现在是在设置键位
+        self.entries["weight"] = self.weight
+
 
         # Gender
         self.label05 = ctk.CTkLabel(self, text="Gender", fg_color="black", text_color="white", corner_radius=10,width=200, height=45,font=font)
@@ -87,6 +106,8 @@ class ModernDesgin(ctk.CTk):
         self.gender_menu.grid(row=4, column=1, padx=10, pady=10, sticky="ew",)
         # 给gender赋值
         self.entry4 = ctk.CTkEntry(self, textvariable=self.gender_var)
+        # 键位设置在字典里
+        self.entries["gender"] = self.gender_var
 
         # 用来显示计算结果
         self.label06 = ctk.CTkLabel(self, text="Symptoms", fg_color="black", text_color="white", corner_radius=10,width=200, height=45,font=font )
@@ -104,22 +125,25 @@ class ModernDesgin(ctk.CTk):
 
 
         # Calculate Button
-        self.button = ctk.CTkButton(self, text="Calculate", fg_color="black", text_color="white", command=self.button_1,
+        self.button = ctk.CTkButton(self, text="Calculate", fg_color="black", text_color="white",
                                     width=400, height=45, font=font)
+        self.button_1 = ctk.CTkButton(self,text = "test" , fg_color="black" , text_color="white" , command = self.button_1(), width=400, height=45, font=font)
         self.button.grid(row=10, column=0, columnspan=2, padx=10, pady=20, sticky="ew")
+        self.button_1.grid(row=15, column=1, columnspan=2, padx=10, pady=20, sticky="ew")
 
 
 
     def button_1 (self):
+        print("def button_1 run successfully ")
         name = self.textbox.get("0.0", "end").strip()  # ← 获取文本框输入
         volume = self.textbox1.get("0.0", "end").strip()
         fraction = self.textbox2.get("0.0", "end").strip()
-        weight = self.textbox3.get("0.0", "end").strip()
+        # weight = self.textbox3.get("0.0", "end").strip()
         gender = self.gender_var.get()
         self.entries["name"] = name
         self.entries["volume"] = volume
         self.entries["fraction"] = fraction
-        self.entries["weight"] = weight
+        #self.entries["weight"] = weight
         self.entries["gender"] = gender
         print(self.entries)
 
