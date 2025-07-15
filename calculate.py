@@ -26,7 +26,19 @@ class Calculator (ModernDesgin):
             database="blood_alcohol"
         )
         self.cursor = self.mydb.cursor()
-        self.button.configure(command=self.calculate)
+
+        self.run()
+
+    def run(self):
+        self.ui()
+        if self.name == "" and self.volume == ''and self.fraction == '' and self.weight == '':
+            messagebox.showerror("Input Error", "All fields must be filled with content that can be converted to a number")
+            return
+        else :
+            self.button.configure(command=self.calculate)
+
+        self.load_data_from_db()  # 加载数据到表格中
+
 
     def print_raw_data(self):
         data = {k: (v.get() if hasattr(v, "get") else v.get())
@@ -70,14 +82,16 @@ class Calculator (ModernDesgin):
 
 
             grams_ethanol = volume * (abv_pct / 100) * self.p
-            print(f"Your weight is {self.weight}")
-            print(f"Your weight is {weight}")
-            weight = self.entries["weight"].get().strip()
+            #print(f"Your weight is {self.weight}")
+            #print(f"Your weight is {weight}")
+            weight = self.entries["weight"].get()
             if weight == " " :
                 messagebox.showerror("Input Error" , "All weights must be filled with content that can be converted to a number")
                 return
 
             weight = float(weight)
+            print(weight)
+            print(self.r)
             self.BAC_0 = grams_ethanol / (weight * self.r)
 
             self.show_data()
@@ -87,9 +101,9 @@ class Calculator (ModernDesgin):
 
 
     def show_data(self):
-        self.cursor.execute("SELECT * FROM blood_alcohol")
+        self.cursor.execute("SELECT * FROM bac_levels")  # 从数据库中选择所有的行
         rows = self.cursor.fetchall()
-        mathed_row = None
+        matched_row = None
 
         for row in rows:
             id, bac_range, g_per_l_range, symptoms, legal_implications, recommendation = row
@@ -101,7 +115,7 @@ class Calculator (ModernDesgin):
                 upper = float(upper.strip())
 
                 if lower <= self.BAC_0 <= upper:
-                    mathed_row = row
+                    matched_row = row
                     break
 
             elif "≥" in g_per_l_range:
@@ -117,6 +131,8 @@ class Calculator (ModernDesgin):
             print(f"Recommendation: {matched_row[5]}")
         else:
             print("No matching BAC level found.")
+        
+
 
     def load_data_from_db(self , only_match = False):
         try:
