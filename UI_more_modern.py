@@ -11,7 +11,7 @@ class ModernDesgin(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title ("Blood Alcohol")
-        self.geometry("1000x1000")
+        self.geometry("1000x700")
 
         self.entries = {}
         self.vars = {}
@@ -104,12 +104,21 @@ class ModernDesgin(ctk.CTk):
 
 
         # Gender
-        self.label05 = ctk.CTkLabel(self, text="Gender", fg_color="black", text_color="white", corner_radius=10,width=200, height=45,font=font)
+        self.label05 = ctk.CTkLabel(self, text="Gender", fg_color="black", text_color="white", corner_radius=10,width=200, height=45,font=font )
         self.label05.grid(row=4, column=0, padx=10, pady=10)
 
         self.gender_var = ctk.StringVar(value="                        male                        ")
-        self.gender_menu = ctk.CTkOptionMenu(self, values=["                male                ", "                        female                        ", "                        other                        "], variable=self.gender_var,
-                                             width=200, font=font,height=45)
+        self.gender_menu = ctk.CTkOptionMenu(
+            self,
+            values=["                        male                        ", "                       Female                       ", "                        Other                        "],
+            variable=self.gender_var,
+            width=200,
+            height=45,
+            fg_color="#003366",  # 设置为深蓝色
+            # button_color="#002147",  # 箭头区域（可选）
+            text_color="white",  # 保证字体仍然清晰
+            font=font
+        )
         self.gender_menu.grid(row=4, column=1, padx=10, pady=10,sticky="w" )
         # 给gender赋值
         self.entry4 = ctk.CTkEntry(self, textvariable=self.gender_var)
@@ -141,7 +150,7 @@ class ModernDesgin(ctk.CTk):
 
 
         # Calculate Button
-        self.button = ctk.CTkButton(self, text="Calculate", fg_color="black", text_color="white",
+        self.button = ctk.CTkButton(self, text="Calculate", fg_color="#003366", text_color="white",
                                     width=400, height=45, font=font)
         self.button_1 = ctk.CTkButton(self,text = "test" , fg_color="black" , text_color="white" , command = self.on_button_click,width=400, height=45, font=font)
         self.button.grid(row=4, column=2, columnspan=2, padx=10, pady=20, sticky="ew")
