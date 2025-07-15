@@ -113,6 +113,8 @@ class Calculator (ModernDesgin):
             print(f"gram_ethanol is {grams_ethanol:.2f} g")
             print(f"weight is {weight:.2f} kg")
             print(f"r is {self.r:.2f} L/kg")
+            self.BAC.set(round(self.BAC_0, 2))
+            print(self.BAC)
 
 
             self.show_data()
