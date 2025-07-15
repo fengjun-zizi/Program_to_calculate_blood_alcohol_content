@@ -1,6 +1,7 @@
 import customtkinter
 import customtkinter as ctk
 from tkinter import *
+from tkinter import ttk
 
 from UI_desgin import Desgin
 # 设置全局外观
@@ -26,7 +27,8 @@ class ModernDesgin(ctk.CTk):
         self.weight = ctk.DoubleVar(value=0.0)
         #self.textbox.grid(row=0, column=0, sticky="nsew")
         #self.textbox.insert("0.0", "Some example text!\n" * 50)
-        self.ui()
+
+
 
     def ui (self):
         self.grid_columnconfigure(0, weight=0)
@@ -47,7 +49,7 @@ class ModernDesgin(ctk.CTk):
 
         self.vars["name"] = ctk.StringVar()
 
-        self.entry = ctk.CTkEntry(self, textvariable=self.vars["name"], orner_radius=10, width=200,height=45,font=font)
+        self.entry = ctk.CTkEntry(self, textvariable=self.vars["name"], corner_radius=10, width=200,height=45,font=font)
         self.entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
         #self.entries["weight"].grid(row=1, column=0, padx=10, pady=10, sticky="e")
         # 设置键位置
@@ -56,27 +58,30 @@ class ModernDesgin(ctk.CTk):
 
 
         # Volume
+        self.vars["volume"] = ctk.DoubleVar()
         self.label02 = ctk.CTkLabel(self, text="Volume", fg_color="black", text_color="white", corner_radius=10,
                                     width=200,height=45,font=font)
         self.label02.grid(row=1, column=0, padx=10, pady=10, sticky="e")
 
-        self.textbox1 = ctk.CTkTextbox(self, width=200, height=45, corner_radius=10)
-        self.textbox1.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+        #self.textbox1 = ctk.CTkTextbox(self, width=200, height=45, corner_radius=10)
+        #self.textbox1.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
         # 变量赋值 Volume
         self.enty1 = ctk.CTkEntry(self, textvariable=self.volume)
+        self.enty1.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
         # 设置键位
-        self.entries["volume"] = self.volume
+        self.entries["volume"] = self.enty1
 
 
-        # Fraction Wine
+        # Fractiosn Wine
         self.label03 = ctk.CTkLabel(self, text="Fraction Wine", fg_color="black", text_color="white", corner_radius=10,
                                     width=200,height=45,font=font)
         self.label03.grid(row=2, column=0, padx=10, pady=10, sticky="e")
 
-        self.textbox2 = ctk.CTkTextbox(self, width=200, height=45, corner_radius=10)
-        self.textbox2.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+        #self.textbox2 = ctk.CTkTextbox(self, width=200, height=45, corner_radius=10)
+        #self.textbox2.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
         # 赋值给Fraction Wine
         self.entry2 = ctk.CTkEntry(self, textvariable=self.fraction)
+        self.entry2.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
         self.entries["fraction"] = self.fraction
 
         # Weight
@@ -86,11 +91,12 @@ class ModernDesgin(ctk.CTk):
 
         # weight的输入框设置
         self.weight_var = ctk.StringVar()
-        self.textbox3 = ctk.CTkEntry(self, textvariable=self.weight_var, width=200, height=45, corner_radius=10)
-        self.textbox3.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
+        #self.textbox3 = ctk.CTkEntry(self, textvariable=self.weight_var, width=200, height=45, corner_radius=10)
+        #self.textbox3.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
 
         #赋值给weight
         self.entry3 = ctk.CTkEntry(self, textvariable=self.weight)
+        self.entry3.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
 
         # 这个是把weight的数据传入到字典，现在是在设置键位
         self.entries["weight"] = self.weight
@@ -127,24 +133,34 @@ class ModernDesgin(ctk.CTk):
         # Calculate Button
         self.button = ctk.CTkButton(self, text="Calculate", fg_color="black", text_color="white",
                                     width=400, height=45, font=font)
-        self.button_1 = ctk.CTkButton(self,text = "test" , fg_color="black" , text_color="white" , command = self.button_1(), width=400, height=45, font=font)
+        self.button_1 = ctk.CTkButton(self,text = "test" , fg_color="black" , text_color="white" , command = self.on_button_click,width=400, height=45, font=font)
         self.button.grid(row=10, column=0, columnspan=2, padx=10, pady=20, sticky="ew")
         self.button_1.grid(row=15, column=1, columnspan=2, padx=10, pady=20, sticky="ew")
 
+        # 创建空白表格
+        self.tree = ttk.Treeview(self, columns=("symptoms", "legal_implications", "recommendation"), show="headings", height=5)
+        self.tree.heading("symptoms", text="Symptoms")
+        self.tree.heading("legal_implications", text="Legal Implications")
+        self.tree.heading("recommendation", text="Recommendation")
+        self.tree.grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
+
+    def on_button_click(self):
+        self.button_1()
+        self.calculate()
 
     def button_1 (self):
         print("def button_1 run successfully ")
-        name = self.textbox.get("0.0", "end").strip()  # ← 获取文本框输入
-        volume = self.textbox1.get("0.0", "end").strip()
-        fraction = self.textbox2.get("0.0", "end").strip()
+        #name = self.textbox.get("0.0", "end").strip()  # ← 获取文本框输入
+        # volume = self.textbox1.get("0.0", "end").strip()
+        #fraction = self.textbox2.get("0.0", "end").strip()
         # weight = self.textbox3.get("0.0", "end").strip()
-        gender = self.gender_var.get()
-        self.entries["name"] = name
-        self.entries["volume"] = volume
-        self.entries["fraction"] = fraction
+        #gender = self.gender_var.get()
+        #self.entries["name"] = name
+        #self.entries["volume"] = volume
+        #self.entries["fraction"] = fraction
         #self.entries["weight"] = weight
-        self.entries["gender"] = gender
+        #self.entries["gender"] = gender
         print(self.entries)
 
 
